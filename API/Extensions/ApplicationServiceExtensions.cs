@@ -1,10 +1,16 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using Application.Jobs.CreateJob;
 using Application.Jobs.GetAllJobs;
 using Domain.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repositories;
 
@@ -15,11 +21,38 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration config)
     {
-        services.AddControllers();
+        services.AddControllers(opt =>
+        {
+            var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+            opt.Filters.Add(new AuthorizeFilter(policy));
+        });
 
         services.AddEndpointsApiExplorer();
 
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.AddSecurityDefinition("JobPortalBearerAuth", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                Description = "Input a valid token to access this API."
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "JobPortalBearerAuth"
+                        }
+                    }, []
+                }
+            });
+        });
 
         services.AddDbContext<DataContext>(opt =>
         {
@@ -28,7 +61,13 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IJobsRepository, JobsRepository>();
 
+        services.AddScoped<IAccountsRepository, AccountsRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddHttpContextAccessor();
+
+        services.AddScoped<IUserAccessor, UserAccessor>();
 
         services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
