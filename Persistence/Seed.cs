@@ -1,11 +1,74 @@
 ﻿using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Persistence.Authorization.Constants;
 
 namespace Persistence;
 
 public class Seed
 {
-    public static async Task SeedDataAsync(DataContext context)
+    public static async Task SeedDataAsync(DataContext context,
+        UserManager<AppUser> userManager,
+        RoleManager<AppRole> roleManager)
     {
+        if (!roleManager.Roles.Any())
+        {
+            List<AppRole> roles =
+            [
+                new() { Name = UserRoles.User },
+                new() { Name = UserRoles.Admin },
+            ];
+
+            foreach (var role in roles)
+            {
+                await roleManager.CreateAsync(role);
+            }
+        }
+
+        if (!userManager.Users.Any())
+        {
+            AppUser admin = new()
+            {
+                Name = "Admin",
+                UserName = "admin",
+                Email = "admin@gmail.com"
+            };
+
+            await userManager.CreateAsync(admin, "Pa$$w0rd");
+
+            await userManager.AddToRoleAsync(admin, UserRoles.Admin);
+
+            List<AppUser> users =
+            [
+                new()
+                {
+                    Name = "Jane Smith",
+                    UserName = "jane",
+                    Email = "janesmith@gmail.com"
+                },
+
+                new()
+                {
+                    Name = "Michael Johnson",
+                    UserName = "michael",
+                    Email = "michaeljohnson@gmail.com"
+                },
+
+                new()
+                {
+                    Name = "Igor Milosavljevic",
+                    UserName = "igao",
+                    Email = "igor@gmail.com"
+                }
+            ];
+
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user, "Pa$$w0rd");
+
+                await userManager.AddToRoleAsync(user, UserRoles.User);
+            }
+        }
+
         if (!context.Jobs.Any())
         {
             List<Job> jobs =
