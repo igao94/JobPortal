@@ -8,4 +8,5 @@ public class JobDto
     public string CompanyName { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public DateTime PostedDate { get; set; }
+    public ICollection<JobApplicationDto> Applicants { get; set; } = [];
 }

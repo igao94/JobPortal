@@ -10,6 +10,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     IdentityUserToken<string>>(options)
 {
     public DbSet<Job> Jobs { get; set; }
+    public DbSet<JobApplication> JobApplications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,5 +27,19 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .WithOne(ur => ur.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
+
+        builder.Entity<JobApplication>(k => k.HasKey(ja => new { ja.AppUserId, ja.JobId }));
+
+        builder.Entity<JobApplication>()
+            .HasOne(ja => ja.AppUser)
+            .WithMany(u => u.JobApplications)
+            .HasForeignKey(ja => ja.AppUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<JobApplication>()
+            .HasOne(ja => ja.Job)
+            .WithMany(j => j.Applicants)
+            .HasForeignKey(ja => ja.JobId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

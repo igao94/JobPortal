@@ -1,8 +1,10 @@
 ﻿using Application.Core;
 using Application.Jobs.DTOs;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Jobs.GetAllJobs;
 
@@ -11,7 +13,9 @@ public class GetAllJobsHandler(IUnitOfWork unitOfWork,
 {
     public async Task<Result<List<JobDto>>> Handle(GetAllJobsQuery request, CancellationToken cancellationToken)
     {
-        var jobs = await unitOfWork.JobsRepository.GetAllJobsAsync();
+        var jobsQuery = unitOfWork.JobsRepository.GetAllJobsQuery();
+
+        var jobs = await jobsQuery.ProjectTo<JobDto>(mapper.ConfigurationProvider).ToListAsync();
 
         return Result<List<JobDto>>.Success(mapper.Map<List<JobDto>>(jobs));
     }

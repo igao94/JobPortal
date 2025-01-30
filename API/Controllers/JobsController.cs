@@ -1,4 +1,6 @@
-﻿using Application.Jobs.CreateJob;
+﻿using Application.Jobs.ApplicationProcessing;
+using Application.Jobs.ApplyForJob;
+using Application.Jobs.CreateJob;
 using Application.Jobs.DeleteJob;
 using Application.Jobs.GetAllJobs;
 using Application.Jobs.GetJobById;
@@ -42,5 +44,17 @@ public class JobsController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> DeleteJob(Guid id)
     {
         return HandleResult(await mediator.Send(new DeleteJobCommand(id)));
+    }
+
+    [HttpPost("{jobId}/applyForJob")]
+    public async Task<IActionResult> ApplyForJob(Guid jobId)
+    {
+        return HandleResult(await mediator.Send(new ApplyForJobCommand(jobId)));
+    }
+
+    [HttpPut("status")]
+    public async Task<IActionResult> UpdateApplicationStatus(ApplicationProcessingCommand command)
+    {
+        return HandleResult(await mediator.Send(command));
     }
 }

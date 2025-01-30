@@ -15,5 +15,8 @@ public class MappingProfile : Profile
         CreateMap<CreateJobCommand, Job>();
 
         CreateMap<UpdateJobCommand, Job>();
+
+        CreateMap<JobApplication, JobApplicationDto>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.AppUser.UserName));
     }
 }
