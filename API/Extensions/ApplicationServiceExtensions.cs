@@ -65,6 +65,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IUsersRepository, UsersRepository>();
 
+        services.AddScoped<IAdminRepository, AdminRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddHttpContextAccessor();

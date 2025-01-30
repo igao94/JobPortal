@@ -13,8 +13,6 @@ public class ApplicationProcessingHandler(IUnitOfWork unitOfWork)
     {
         string[] validStatuses = ["Pending", "Accepted", "Rejected"];
 
-        var lowerUsername = request.Username.ToLower().Trim();
-
         var normalizedRequestStatus = CultureInfo.CurrentCulture.TextInfo
             .ToTitleCase(request.Status.ToLower())
             .Trim();
@@ -22,7 +20,7 @@ public class ApplicationProcessingHandler(IUnitOfWork unitOfWork)
         if (!validStatuses.Contains(normalizedRequestStatus))
             return Result<Unit>.Failure($"Choose one of valid statuses: {string.Join(", ", validStatuses)}.");
 
-        var user = await unitOfWork.UsersRepository.GetUserByUsernameAsync(lowerUsername);
+        var user = await unitOfWork.UsersRepository.GetUserByUsernameAsync(request.Username);
 
         if (user is null) return Result<Unit>.Failure("User doesn't exist.");
 

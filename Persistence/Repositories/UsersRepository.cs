@@ -8,7 +8,7 @@ public class UsersRepository(DataContext context) : IUsersRepository
 {
     public async Task<AppUser?> GetUserByUsernameAsync(string username)
     {
-        return await context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+        return await context.Users.FirstOrDefaultAsync(u => u.UserName == username.ToLower().Trim());
     }
 
     public IQueryable<AppUser> GetAllUsersQuery(string currentUserUsername)

@@ -13,7 +13,7 @@ public class RegisterHandler(IUnitOfWork unitOfWork,
 {
     public async Task<Result<AccountDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var lowerCaseUsername = request.Username.ToLower();
+        var lowerCaseUsername = request.Username.ToLower().Trim();
 
         if (await unitOfWork.AccountsRepository.IsEmailTakenAsync(request.Email))
             return Result<AccountDto>.Failure("Email is already taken.");

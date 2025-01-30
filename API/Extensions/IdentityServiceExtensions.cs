@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using Persistence.Authorization.Constants;
 using System.Text;
 
 namespace API.Extensions;
@@ -39,6 +40,9 @@ public static class IdentityServiceExtensions
             });
 
         services.AddScoped<ITokenService, TokenService>();
+
+        services.AddAuthorizationBuilder()
+            .AddPolicy(PolicyTypes.RequireAdminRole, policy => policy.RequireRole(UserRoles.Admin));
 
         return services;
     }
