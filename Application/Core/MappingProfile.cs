@@ -1,6 +1,7 @@
 ﻿using Application.Jobs.CreateJob;
 using Application.Jobs.DTOs;
 using Application.Jobs.UpdateJob;
+using Application.Users.DTOs;
 using AutoMapper;
 using Domain.Entities;
 
@@ -18,5 +19,7 @@ public class MappingProfile : Profile
 
         CreateMap<JobApplication, JobApplicationDto>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.AppUser.UserName));
+
+        CreateMap<AppUser, UserDto>();
     }
 }
