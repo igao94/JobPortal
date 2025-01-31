@@ -1,4 +1,5 @@
-﻿using Application.Jobs.ApplicationProcessing;
+﻿using Application.Jobs;
+using Application.Jobs.ApplicationProcessing;
 using Application.Jobs.ApplyForJob;
 using Application.Jobs.CreateJob;
 using Application.Jobs.DeleteJob;
@@ -15,9 +16,9 @@ namespace API.Controllers;
 public class JobsController(IMediator mediator) : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllJobs()
+    public async Task<IActionResult> GetAllJobs([FromQuery] JobsParams jobsParams)
     {
-        return HandleResult(await mediator.Send(new GetAllJobsQuery()));
+        return HandlePagedResult(await mediator.Send(new GetAllJobsQuery(jobsParams)));
     }
 
     [HttpGet("{id}")]

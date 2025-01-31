@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Jobs.GetAllJobs;
 
-public record GetAllJobsQuery : IRequest<Result<List<JobDto>>>;
+public record GetAllJobsQuery(JobsParams JobsParams) : IRequest<Result<PagedList<JobDto>>>;

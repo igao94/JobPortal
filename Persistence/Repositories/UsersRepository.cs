@@ -11,9 +11,18 @@ public class UsersRepository(DataContext context) : IUsersRepository
         return await context.Users.FirstOrDefaultAsync(u => u.UserName == username.ToLower().Trim());
     }
 
-    public IQueryable<AppUser> GetAllUsersQuery(string currentUserUsername)
+    public IQueryable<AppUser> GetAllUsersQuery(string currentUserUsername, string? searchTerm)
     {
-        return context.Users.Where(u => u.UserName != currentUserUsername).AsQueryable();
+        IQueryable<AppUser> query = context.Users.Where(u => u.UserName != currentUserUsername);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(u => u.Name.Contains(searchTerm)
+            || u.UserName!.Contains(searchTerm)
+            || u.Email!.Contains(searchTerm));
+        }
+
+        return query;
     }
 
     public void DeleteUser(AppUser user) => context.Users.Remove(user);

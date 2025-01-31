@@ -9,14 +9,20 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Jobs.GetAllJobs;
 
 public class GetAllJobsHandler(IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetAllJobsQuery, Result<List<JobDto>>>
+    IMapper mapper) : IRequestHandler<GetAllJobsQuery, Result<PagedList<JobDto>>>
 {
-    public async Task<Result<List<JobDto>>> Handle(GetAllJobsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<JobDto>>> Handle(GetAllJobsQuery request, 
+        CancellationToken cancellationToken)
     {
-        var jobsQuery = unitOfWork.JobsRepository.GetAllJobsQuery();
+        var jobsQuery = unitOfWork.JobsRepository.GetAllJobsQuery(request.JobsParams.SearchTerm,
+        request.JobsParams.SortColumn,
+        request.JobsParams.SortOrder);
 
-        var jobs = await jobsQuery.ProjectTo<JobDto>(mapper.ConfigurationProvider).ToListAsync();
+        var jobs = await PagedList<JobDto>
+            .CreateAsync(jobsQuery.ProjectTo<JobDto>(mapper.ConfigurationProvider),
+            request.JobsParams.PageNumber,
+            request.JobsParams.PageSize);
 
-        return Result<List<JobDto>>.Success(mapper.Map<List<JobDto>>(jobs));
+        return Result<PagedList<JobDto>>.Success(jobs);
     }
 }

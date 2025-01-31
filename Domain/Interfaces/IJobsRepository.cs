@@ -4,7 +4,7 @@ namespace Domain.Interfaces;
 
 public interface IJobsRepository
 {
-    IQueryable<Job> GetAllJobsQuery();
+    IQueryable<Job> GetAllJobsQuery(string? searchTerm, string? sortColumn, string? sortOrder);
     IQueryable<Job> GetJobByIdQuery(Guid id);
     Task<Job?> GetJobByIdAsync(Guid id);
     void AddJob(Job job);
