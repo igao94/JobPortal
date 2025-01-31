@@ -78,6 +78,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IPhotoService, PhotoService>();
 
+        services.AddScoped<IFileService, FileService>();
+
         services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllJobsQuery).Assembly));

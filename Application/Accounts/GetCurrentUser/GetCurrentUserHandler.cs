@@ -25,7 +25,7 @@ public class GetCurrentUserHandler(IUnitOfWork unitOfWork,
             Email = user.Email,
             Token = await tokenService.GetTokenAsync(user),
             Image = user.Photos.FirstOrDefault(p => p.IsMain)?.Url,
-            ResumePath = null,
+            ResumePath = user.ResumePath
         });
     }
 }

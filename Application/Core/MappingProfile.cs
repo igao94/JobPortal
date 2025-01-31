@@ -21,7 +21,8 @@ public class MappingProfile : Profile
         CreateMap<JobApplication, JobApplicationDto>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.AppUser.UserName))
             .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.AppUser.Photos
-                .FirstOrDefault(p => p.IsMain)!.Url));
+                .FirstOrDefault(p => p.IsMain)!.Url))
+            .ForMember(dest => dest.ResumePath, opt => opt.MapFrom(src => src.AppUser.ResumePath));
 
         CreateMap<AppUser, UserDto>()
             .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Photos

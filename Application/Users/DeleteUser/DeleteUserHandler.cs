@@ -7,7 +7,8 @@ namespace Application.Users.DeleteUser;
 
 public class DeleteUserHandler(IUnitOfWork unitOfWork,
     IUserAccessor userAccessor,
-    IPhotoService photoService) : IRequestHandler<DeleteUserCommand, Result<Unit>?>
+    IPhotoService photoService,
+    IFileService fileService) : IRequestHandler<DeleteUserCommand, Result<Unit>?>
 {
     public async Task<Result<Unit>?> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
@@ -15,6 +16,8 @@ public class DeleteUserHandler(IUnitOfWork unitOfWork,
             .GetUserWithPhotosByUsernameAsync(userAccessor.GetCurrentUserUsername());
 
         if (user is null) return null;
+
+        if (!string.IsNullOrEmpty(user.ResumePath)) fileService.DeleteFile(user.ResumePath);
 
         if (user.Photos.Count != 0)
         {

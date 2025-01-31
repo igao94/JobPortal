@@ -9,8 +9,7 @@ public class PhotoService(IWebHostEnvironment env, IHttpContextAccessor httpCont
 {
     public async Task<PhotoUploadResult> UploadPhotoAsync(IFormFile file)
     {
-        if (file is null || file.Length == 0)
-            throw new ArgumentException("Upload a photo.");
+        if (file is null || file.Length == 0) throw new ArgumentException("Upload a photo.");
 
         string[] validExtensions = [".jpg", ".jpeg", ".png"];
 
@@ -19,13 +18,11 @@ public class PhotoService(IWebHostEnvironment env, IHttpContextAccessor httpCont
         if (!validExtensions.Contains(extension))
             throw new ArgumentException($"Valid extensions are: {string.Join(", ", validExtensions)}.");
 
-        if (file.Length > 5242880)
-            throw new ArgumentException("Max size can be 5MB.");
+        if (file.Length > 5242880) throw new InvalidOperationException("Max size can be 5MB.");
 
         var folderPath = Path.Combine(env.WebRootPath, "Uploads", "Photos");
 
-        if (!Directory.Exists(folderPath))
-            Directory.CreateDirectory(folderPath);
+        if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
 
         var photoId = Guid.NewGuid().ToString();
 
@@ -46,7 +43,7 @@ public class PhotoService(IWebHostEnvironment env, IHttpContextAccessor httpCont
 
     public void DeletePhoto(string url)
     {
-        if (string.IsNullOrWhiteSpace(url)) throw new ArgumentException("Provide photo url.");
+        if (string.IsNullOrWhiteSpace(url)) throw new ArgumentNullException(nameof(url), "Provide photo url.");
 
         var fileName = Path.GetFileName(new Uri(url).LocalPath);
 
