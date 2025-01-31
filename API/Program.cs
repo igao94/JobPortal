@@ -30,6 +30,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
+app.UseMiddleware<CheckUserExistsMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();
