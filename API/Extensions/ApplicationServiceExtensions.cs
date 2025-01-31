@@ -55,9 +55,18 @@ public static class ApplicationServiceExtensions
             });
         });
 
+        var useInMemoryDatabase = config.GetValue<bool>("UseInMemoryDatabase");
+
         services.AddDbContext<DataContext>(opt =>
         {
-            opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            if (useInMemoryDatabase)
+            {
+                opt.UseInMemoryDatabase("InMemoryDatabase");
+            }
+            else
+            {
+                opt.UseSqlServer(config.GetConnectionString("SqlServer"));
+            }
         });
 
         services.AddScoped<IJobsRepository, JobsRepository>();

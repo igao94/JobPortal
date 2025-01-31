@@ -44,11 +44,14 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
 
+    var useInMemoryDatabase = services.GetRequiredService<IConfiguration>()
+        .GetValue<bool>("UseInMemoryDatabase");
+
+    if (!useInMemoryDatabase) await context.Database.MigrateAsync();
+
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-
-    await context.Database.MigrateAsync();
 
     await Seed.SeedDataAsync(context, userManager, roleManager);
 }
