@@ -6,14 +6,25 @@ using MediatR;
 namespace Application.Users.DeleteUser;
 
 public class DeleteUserHandler(IUnitOfWork unitOfWork,
-    IUserAccessor userAccessor) : IRequestHandler<DeleteUserCommand, Result<Unit>?>
+    IUserAccessor userAccessor,
+    IPhotoService photoService) : IRequestHandler<DeleteUserCommand, Result<Unit>?>
 {
     public async Task<Result<Unit>?> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var user = await unitOfWork.UsersRepository
-            .GetUserByUsernameAsync(userAccessor.GetCurrentUserUsername());
+            .GetUserWithPhotosByUsernameAsync(userAccessor.GetCurrentUserUsername());
 
         if (user is null) return null;
+
+        if (user.Photos.Count != 0)
+        {
+            foreach (var photo in user.Photos)
+            {
+                photoService.DeletePhoto(photo.Url);
+            }
+
+            unitOfWork.PhotosRepository.DeleteUserPhotos(user);
+        }
 
         unitOfWork.UsersRepository.DeleteUser(user);
 

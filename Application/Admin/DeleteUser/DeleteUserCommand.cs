@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Admin.DeleteUser;
 
-public record DeleteUserQuery(string Username) : IRequest<Result<Unit>>;
+public record DeleteUserCommand(string Username) : IRequest<Result<Unit>>;

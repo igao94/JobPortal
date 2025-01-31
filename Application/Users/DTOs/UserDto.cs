@@ -1,4 +1,6 @@
-﻿namespace Application.Users.DTOs;
+﻿using Application.Photos.DTOs;
+
+namespace Application.Users.DTOs;
 
 public class UserDto
 {
@@ -7,4 +9,5 @@ public class UserDto
     public string Email {  get; set; } = string.Empty;
     public string? Image {  get; set; }
     public string? ResumePath {  get; set; }
+    public ICollection<PhotoDto> Photos { get; set; } = [];
 }

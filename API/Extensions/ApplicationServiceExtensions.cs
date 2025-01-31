@@ -6,6 +6,7 @@ using Domain.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -67,11 +68,15 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IAdminRepository, AdminRepository>();
 
+        services.AddScoped<IPhotosRepository, PhotosRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddHttpContextAccessor();
 
         services.AddScoped<IUserAccessor, UserAccessor>();
+
+        services.AddScoped<IPhotoService, PhotoService>();
 
         services.AddAutoMapper(typeof(MappingProfile).Assembly);
 

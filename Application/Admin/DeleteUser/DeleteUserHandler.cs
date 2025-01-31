@@ -1,16 +1,28 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
 
 namespace Application.Admin.DeleteUser;
 
-public class DeleteUserHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteUserQuery, Result<Unit>?>
+public class DeleteUserHandler(IUnitOfWork unitOfWork,
+    IPhotoService photoService) : IRequestHandler<DeleteUserCommand, Result<Unit>?>
 {
-    public async Task<Result<Unit>?> Handle(DeleteUserQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>?> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await unitOfWork.UsersRepository.GetUserByUsernameAsync(request.Username);
+        var user = await unitOfWork.UsersRepository.GetUserWithPhotosByUsernameAsync(request.Username);
 
         if (user is null) return null;
+
+        if (user.Photos.Count != 0)
+        {
+            foreach (var photo in user.Photos)
+            {
+                photoService.DeletePhoto(photo.Url);
+            }
+
+            unitOfWork.PhotosRepository.DeleteUserPhotos(user);
+        }
 
         unitOfWork.UsersRepository.DeleteUser(user);
 

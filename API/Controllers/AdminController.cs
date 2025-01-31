@@ -21,7 +21,7 @@ public class AdminController(IMediator mediator) : BaseApiController
     [HttpDelete("{username}")]
     public async Task<IActionResult> DeleteUser(string username)
     {
-        return HandleResult(await mediator.Send(new DeleteUserQuery(username)));
+        return HandleResult(await mediator.Send(new DeleteUserCommand(username)));
     }
 
     [Authorize(Policy = PolicyTypes.RequireAdminRole)]

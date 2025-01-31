@@ -6,5 +6,6 @@ public interface IUnitOfWork
     IAccountsRepository AccountsRepository { get; }
     IUsersRepository UsersRepository { get; }
     IAdminRepository AdminRepository { get; }
+    IPhotosRepository PhotosRepository { get; }
     Task<bool> SaveChangesAsync();
 }
